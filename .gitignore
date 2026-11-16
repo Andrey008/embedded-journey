@@ -1,0 +1,39 @@
+# macOS
+.DS_Store
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# VS Code (оставляем общие настройки)
+.vscode/*
+!.vscode/extensions.json
+
+# STM32CubeIDE / Eclipse
+Debug/
+Release/
+*.launch
+.settings/
+
+# Сборка
+build/
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Тяжёлые видео не храним в git: заливаем на YouTube (unlisted) и ставим ссылку
+*.mov
+*.MOV
+*.mp4
+!**/media/*-short.mp4
+
+# Черновики инвентаризации
+*.xlsx
