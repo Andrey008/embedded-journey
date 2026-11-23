@@ -14,6 +14,7 @@
 | **ESP32-C6-WROOM** | 1 | 3.3V | Wi-Fi 6, BLE, Zigbee/Thread | Свежий чип на RISC-V. Основной кандидат для LED-стекла |
 | **Raspberry Pi Zero W** | 1 | 3.3V | Wi-Fi, BT | С Wi-Fi, значит SSH по воздуху, без возни с USB |
 | USB-to-Ethernet адаптер | 1 | — | — | Запасной вариант сети для Pi |
+| **USB-UART CP2102** | 1 | 3.3V логика (есть вывод 5V) | USB ↔ UART TTL | Приехал 23.11. Для `printf` с Blue Pill на W07 |
 | **HC-06** | 1 | 3.3V логика (питание 5V) | Bluetooth Classic | Управление с телефона по Bluetooth-UART |
 
 ## Датчики
@@ -114,7 +115,6 @@
 - Логический анализатор 24MHz 8ch (W08+)
 - MPU6050 (W09)
 - Преобразователь уровней 3.3↔5V (W05)
-- USB-UART адаптер CP2102 / CH340 (W07)
 
 ## По месту
 
