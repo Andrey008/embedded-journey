@@ -1,66 +1,64 @@
-# 01 · Светофор с кнопкой пешехода
+# 01 · Traffic Light with Pedestrian Button
 
-> Неделя: W01 · Задача: EMB-1 · Платформа: Arduino Uno
+> Week: W01 · Platform: Arduino Uno
 
 ![demo](media/demo.gif)
 
-🎥 Видео: https://www.youtube.com/watch?v=e7iWiRZsFYM
+🎥 Video: https://www.youtube.com/watch?v=e7iWiRZsFYM
 
-## Что делает
-Светофор для машин с кнопкой для пешеходов. Пешеход нажимает кнопку, зелёный мигает 3 раза, загорается жёлтый, потом красный, и на 7-сегментном индикаторе идёт отсчёт 9 → 0, пока пешеходы переходят. Всё написано без `delay()`: кнопка срабатывает в любой момент.
+## What it does
+A car traffic light with a pedestrian button. The pedestrian presses the button, green blinks 3 times, then yellow, then red, and a 7-segment display counts down 9 → 0 while pedestrians cross. No `delay()` anywhere: the button is handled at any moment.
 
-## Железо
-| Компонент | Кол-во | Заметки |
-|-----------|--------|---------|
-| Arduino Uno | 1 | ATmega328P, 5V логика |
-| Макетка | 1 | |
-| Светодиоды: красный, жёлтый, зелёный | 3 | |
-| Тактовая кнопка | 1 | Внутренняя подтяжка `INPUT_PULLUP`, внешний резистор не нужен |
-| 7-сегментный индикатор 5161AS | 1 | Общий катод |
-| Резистор 330 Ом | 10 | 3 на светодиоды + 7 на сегменты |
-| Провода папа-папа | ~14 | |
+## Hardware
+| Component | Qty | Notes |
+|-----------|-----|-------|
+| Arduino Uno (Funduino clone) | 1 | ATmega328P, 5V logic |
+| Breadboard | 1 | |
+| LEDs: red, yellow, green | 3 | |
+| Tactile button | 1 | Internal pull-up (`INPUT_PULLUP`), no external resistor |
+| 7-segment display 5161AS | 1 | Common cathode |
+| 330 Ω resistor | 10 | 3 for LEDs + 7 for segments |
+| Jumper wires (male-male) | ~14 | |
 
-## Схема подключения
-| Пин Uno | Куда | Заметки |
-|---------|------|---------|
-| D2–D8 | сегменты a–g индикатора | Каждый через свой резистор 330 Ом |
-| GND | COM индикатора (ножка 3) | Без резистора |
-| D9 | кнопка → GND | `INPUT_PULLUP`: отпущена = 1, нажата = 0 |
-| D10 | красный светодиод → 330 Ом → GND | |
-| D11 | жёлтый светодиод → 330 Ом → GND | |
-| D12 | зелёный светодиод → 330 Ом → GND | |
-| D13 (светодиод L на плате) | — | Горит, когда пешеход нажал кнопку и ждёт |
+## Wiring
+| Uno pin | Connected to | Notes |
+|---------|--------------|-------|
+| D2–D8 | display segments a–g | Each through its own 330 Ω resistor |
+| GND | display COM (pin 3) | No resistor |
+| D9 | button → GND | `INPUT_PULLUP`: released = 1, pressed = 0 |
+| D10 | red LED → 330 Ω → GND | |
+| D11 | yellow LED → 330 Ω → GND | |
+| D12 | green LED → 330 Ω → GND | |
+| D13 (on-board LED L) | — | On while a pedestrian is waiting |
 
-Подробная таблица сборки по дыркам макетки есть в задаче EMB-1.
+![breadboard](media/breadboard.jpg)
 
-![schematic](media/breadboard.jpg)
+## How it works
+**State machine.** The traffic light has five states: `GREEN` → `GREEN_BLINK` → `YELLOW` → `RED` (with countdown) → `RED_YELLOW` → back to `GREEN`. Each state defines which lights are on and when to move to the next one.
 
-## Как работает
-**Конечный автомат.** У светофора пять состояний: `GREEN` → `GREEN_BLINK` → `YELLOW` → `RED` (с отсчётом) → `RED_YELLOW` → снова `GREEN`. В каждом состоянии понятно, что горит и при каком условии переходить дальше.
+**`millis()` instead of `delay()`.** `loop()` runs thousands of times per second and checks the clock every time: "how long have I been in this state?". The program never blocks, so a button press is never missed.
 
-**`millis()` вместо `delay()`.** `loop()` крутится тысячи раз в секунду и каждый раз сверяется с часами: «сколько я уже в этом состоянии?». Программа никогда не стоит на месте, поэтому нажатие кнопки не теряется.
+**Debouncing.** Button contacts bounce for a few milliseconds when pressed, so one press used to count as 2–3. A new button state is accepted only after it stays stable for 30 ms.
 
-**Антидребезг.** Контакты кнопки при нажатии несколько миллисекунд «дребезжат», и одно нажатие считалось как 2–3. Новому состоянию кнопки верим, только если оно продержалось 30 мс без скачков.
+**7-segment display.** Each digit is stored as a byte where every bit is one segment (a–g). `showDigit()` walks through the 7 bits and turns the right segments on.
 
-**Индикатор.** Для каждой цифры хранится байт, где каждый бит — одна палочка (a–g). `showDigit()` проходит по 7 битам и зажигает нужные палочки.
+Code by step: [steps/03-button.cpp](steps/03-button.cpp) (button), [steps/04-display.cpp](steps/04-display.cpp) (display 0–9), [src/main.cpp](src/main.cpp) (full traffic light).
 
-Код по шагам: [steps/03-button.cpp](steps/03-button.cpp) (кнопка), [steps/04-display.cpp](steps/04-display.cpp) (индикатор 0–9), [src/main.cpp](src/main.cpp) (светофор целиком).
+## Calculations
+LED resistor: `R = (5 V − 2 V) / 10 mA = 300 Ω` → nearest standard value 330 Ω, current ≈ 9 mA.
 
-## Измерения
-Резистор для светодиода: `R = (5 В − 2 В) / 10 мА = 300 Ом` → ближайший номинал 330 Ом, ток ≈ 9 мА.
+Display: 7 segments × ~9 mA ≈ 63 mA total. The Uno handles up to ~200 mA for the whole chip and 20 mA per pin, so there is plenty of headroom.
 
-Индикатор: 7 сегментов × ~9 мА ≈ 63 мА суммарно. Uno выдерживает до ~200 мА на весь чип и 20 мА на пин, запас есть.
+## What I learned
+- Ohm's law in practice: why an LED needs a resistor and how to size it.
+- Multimeter: voltage, resistance, continuity, current (and why you never put it across a power supply in current mode).
+- How a breadboard is connected inside.
+- `INPUT_PULLUP` and why an input needs a pull-up.
+- Contact bounce and debouncing with `millis()`.
+- 7-segment display: common cathode, one resistor per segment, digits as bitmasks.
+- State machines and non-blocking code without `delay()`.
 
-## Что узнал
-- Закон Ома на практике: зачем светодиоду резистор и как его посчитать.
-- Мультиметр: напряжение, сопротивление, прозвонка, ток (и что в режиме тока его нельзя прикладывать к питанию).
-- Как устроена макетка: какие дырки соединены внутри.
-- `INPUT_PULLUP` и зачем входу подтяжка.
-- Дребезг контактов и антидребезг через `millis()`.
-- 7-сегментный индикатор: общий катод, свой резистор на каждый сегмент, цифры как битовые маски.
-- Конечный автомат и программа без `delay()`.
-
-## Проблемы
-- **Прошивка не заливалась (`not in sync`).** Помогла смена USB-порта на компьютере. Подробно в [BUGS.md](../../BUGS.md).
-- **Не горели зелёный и жёлтый.** Причина: провода стояли не в тех гнёздах Uno. Нашёл, подав 5 В на светодиод в обход Uno: так сразу видно, в проводах проблема или в программе.
-- **Не заливалось при открытом Serial Monitor.** Порт может слушать только одна программа. Решение: кнопка Upload and Monitor.
+## Issues
+- **Firmware wouldn't upload (`not in sync`).** Switching to another USB port on the computer fixed it.
+- **Green and yellow LEDs didn't light up.** Wires were in the wrong Uno sockets. Found it by feeding 5 V directly to the LED, bypassing the Uno: this instantly shows whether the problem is in the wiring or in the code.
+- **Upload failed while Serial Monitor was open.** Only one program can use the serial port at a time. Fix: use Upload and Monitor.

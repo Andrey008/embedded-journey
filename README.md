@@ -1,39 +1,39 @@
 # Embedded Journey
 
-Учусь embedded-разработке с нуля: от Arduino до STM32, FreeRTOS, радиосвязи и embedded Linux.
-План на 16 недель (ноябрь 2026 – март 2027), минимум теории, максимум практики.
+Learning embedded development from scratch: from Arduino to STM32, FreeRTOS, radio links and embedded Linux.
+A 16-week hands-on plan (November 2026 – March 2027): minimum theory, maximum practice.
 
-## Проекты
+## Projects
 
-| # | Проект | Платформа | Что внутри | Видео |
-|---|--------|-----------|------------|-------|
-| 01 | Светофор с кнопкой | Arduino | GPIO, `millis()`, pull-up | — |
+| # | Project | Platform | What's inside | Video |
+|---|---------|----------|---------------|-------|
+| 01 | [Traffic light with pedestrian button](projects/01-traffic-light/) | Arduino Uno | GPIO, `millis()` state machine, debouncing, 7-segment display | [▶️](https://www.youtube.com/watch?v=e7iWiRZsFYM) |
 
-<!-- Добавляй строку после каждого мини-проекта -->
+<!-- Add a row after each mini-project -->
 
-## Структура репозитория
+## Repository layout
 
 ```
 .
-├── README.md          ← этот файл, витрина проектов
-├── HARDWARE.md        ← что за железо у меня есть: платы, датчики, напряжения
-├── BUGS.md            ← журнал багов и как их решил (для собеседований)
-├── hardware/photos/   ← фото плат и модулей
-├── docs/              ← заметки, даташиты, расчёты
+├── README.md          ← this file, project showcase
+├── HARDWARE.md        ← hardware inventory: boards, sensors, voltages
+├── BUGS.md            ← bug journal: what broke and how I fixed it
+├── hardware/photos/   ← photos of boards and modules
+├── docs/              ← notes, datasheets, calculations
 └── projects/
-    ├── _template/     ← шаблон, его копируешь для нового проекта
-    └── NN-name/       ← один проект = одна папка (01-traffic-light, 02-light-theremin…)
-        ├── README.md  ← что делает, схема, что узнал
-        ├── src/       ← код (PlatformIO / CubeIDE проект)
-        └── media/     ← фото, схемы, гифки, скриншоты осциллографа
+    ├── _template/     ← template for a new project
+    └── NN-name/       ← one project = one folder (01-traffic-light, 02-light-theremin…)
+        ├── README.md  ← what it does, wiring, what I learned
+        ├── src/       ← code (PlatformIO / CubeIDE project)
+        └── media/     ← photos, schematics, GIFs, oscilloscope screenshots
 ```
 
-## Как начать новый проект
+## Starting a new project
 
 ```bash
 cp -r projects/_template projects/02-light-theremin
 ```
 
-## Навыки
+## Skills
 
-Arduino · ESP32 · STM32 (HAL, CubeMX) · FreeRTOS · GPIO/PWM/ADC · I2C/SPI/UART · DMA · PID · nRF24/LoRa · Raspberry Pi / Linux · осциллограф, логический анализатор, пайка
+Arduino · ESP32 · STM32 (HAL, CubeMX) · FreeRTOS · GPIO/PWM/ADC · I2C/SPI/UART · DMA · PID · nRF24/LoRa · Raspberry Pi / Linux · oscilloscope, logic analyzer, soldering
