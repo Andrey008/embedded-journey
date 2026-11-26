@@ -24,6 +24,10 @@ Only tracks from the **YouTube Audio Library** are safe from copyright claims.
 2. Filter **Attribution: not required**. Calm genres work well: Ambient, Electronic, Cinematic.
 3. Download 5–10 tracks into `~/Music/shorts/`.
 
+If a track needs credit, put a text file with the **same name** next to it (`track.mp3` → `track.txt`)
+with the attribution line. `/short` adds it to the description. Tracks that need a per-video license
+(e.g. Declan DP from SoundCloud) → write that in the `.txt`, and get the license before each upload.
+
 `/short` picks one at random and plays it instead of the room noise (or quietly under real sound).
 Don't use tracks from TikTok, Spotify or random "no copyright" channels: those are what get claimed.
 

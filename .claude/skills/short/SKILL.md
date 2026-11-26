@@ -20,9 +20,12 @@ Talk to the user in Russian; title, description and repo text in English.
    - Number: rows in `docs/videos.md` with that week + 1.
 4. **Decide trimming.** From the frames, suggest start/end seconds that cut dead time (hands reaching for OBS, empty frames). Shorts limit is 3 min; aim for 15–45 s.
 5. **Decide sound.** Music tracks live in `~/Music/shorts/` (only YouTube Audio Library tracks, safe from Content ID).
-   - Default: `mute` + a random track from that folder, different from the previous video. The room mic is mostly noise.
+   - Default: `mute` + a random track from that folder, different from the last row's Music in `docs/videos.md`. The room mic is mostly noise.
    - If the user says the video has meaningful sound (buzzer, voice): `norm` + music (plays quietly underneath), or `norm` without music if they ask.
    - Folder empty or missing → `norm`, no music, and remind them how to add tracks (see `docs/recording.md`).
+   - **Credits:** if `<track>.txt` exists next to the track, append its text to the end of the description under `Music:`.
+     If it says a per-video license is required (e.g. Declan DP → license.declandp.info), tell him to generate the
+     license for this video and paste it into the description BEFORE uploading. No `.txt` → assume no attribution needed, but say so.
 6. **Render:** `tools/short.sh "<raw>" ~/Movies/embedded-ready/WNN-N-<slug>.mp4 <start> <end> <audio> [music]`
 7. **Privacy check of the rendered file** (always, never skip). Make contact sheets at 1 frame/s:
    `ffmpeg -i <ready> -vf "fps=1,scale=360:-1,tile=4x3" <scratchpad>/sheet%02d.jpg` and look at every sheet.
@@ -64,7 +67,7 @@ Replace `#arduino` with `#esp32` / `#stm32` / `#raspberrypi` to match the platfo
 
 ## Part B: after upload (user sends the YouTube link)
 
-1. Append a row to `docs/videos.md`: `| WNN | N | <What is shown> | [NN-name](../projects/NN-name/) | <link> |`.
+1. Append a row to `docs/videos.md`: `| WNN | N | <What is shown> | [NN-name](../projects/NN-name/) | <link> | <music file name or —> |`.
 2. Add to the project README under `## Progress videos` (create the section if missing):
    `- <What is shown>: <one sentence>. 🎥 <link>`
 3. If it is the final demo of the project, also put the link in the root `README.md` table (Video column).
