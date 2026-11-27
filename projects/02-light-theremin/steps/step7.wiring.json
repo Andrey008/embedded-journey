@@ -1,0 +1,15 @@
+{
+  "title": "W02 · RGB: three PWM channels",
+  "board": "uno",
+  "parts": [
+    { "id": "rgb", "type": "generic", "legs": ["c27", "c28", "c29", "c30"], "label": "RGB K851264 (GND G B R)" }
+  ],
+  "wires": [
+    { "from": "5V", "to": "+1", "color": "red", "caption": "5V → + rail" },
+    { "from": "GND", "to": "-1", "color": "black", "caption": "GND → − rail" },
+    { "from": "-27", "to": "a27", "color": "black", "caption": "RGB common − → GND" },
+    { "from": "D9", "to": "a28", "color": "orange", "caption": "D9 (PWM) → green" },
+    { "from": "D6", "to": "a29", "color": "green", "caption": "D6 (PWM) → blue" },
+    { "from": "D5", "to": "a30", "color": "blue", "caption": "D5 (PWM) → red" }
+  ]
+}

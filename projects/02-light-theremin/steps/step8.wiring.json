@@ -1,0 +1,132 @@
+{
+  "title": "W02 · Light theremin",
+  "board": "uno",
+  "parts": [
+    {
+      "id": "btn",
+      "type": "button",
+      "legs": [
+        "f1",
+        "e3"
+      ],
+      "label": "mute"
+    },
+    {
+      "id": "ldr",
+      "type": "photoresistor",
+      "legs": [
+        "+17",
+        "a17"
+      ],
+      "label": "LDR"
+    },
+    {
+      "id": "r2",
+      "type": "resistor",
+      "from": "d17",
+      "to": "d19",
+      "label": "10kΩ"
+    },
+    {
+      "id": "r3",
+      "type": "resistor",
+      "from": "g20",
+      "to": "g22",
+      "label": "220Ω"
+    },
+    {
+      "id": "buzzer",
+      "type": "generic",
+      "legs": [
+        "i22",
+        "i25"
+      ],
+      "label": "buzzer"
+    },
+    {
+      "id": "rgb",
+      "type": "generic",
+      "legs": [
+        "c27",
+        "c28",
+        "c29",
+        "c30"
+      ],
+      "label": "RGB"
+    }
+  ],
+  "wires": [
+    {
+      "from": "5V",
+      "to": "+1",
+      "color": "red",
+      "caption": "5V → + rail"
+    },
+    {
+      "from": "GND",
+      "to": "-1",
+      "color": "black",
+      "caption": "GND → − rail"
+    },
+    {
+      "from": "-3",
+      "to": "a3",
+      "color": "black",
+      "caption": "button → GND"
+    },
+    {
+      "from": "D2",
+      "to": "j1",
+      "color": "orange",
+      "caption": "D2 ← mute button"
+    },
+    {
+      "from": "-19",
+      "to": "a19",
+      "color": "black",
+      "caption": "10kΩ → GND"
+    },
+    {
+      "from": "A1",
+      "to": "c17",
+      "color": "yellow",
+      "caption": "light → A1"
+    },
+    {
+      "from": "D8",
+      "to": "j20",
+      "color": "blue",
+      "caption": "D8 (tone) → buzzer"
+    },
+    {
+      "from": "GND",
+      "to": "j25",
+      "color": "black",
+      "caption": "buzzer → GND"
+    },
+    {
+      "from": "-27",
+      "to": "a27",
+      "color": "black",
+      "caption": "RGB − → GND"
+    },
+    {
+      "from": "D9",
+      "to": "a28",
+      "color": "orange",
+      "caption": "D9 → green"
+    },
+    {
+      "from": "D6",
+      "to": "a29",
+      "color": "green",
+      "caption": "D6 → blue"
+    },
+    {
+      "from": "D5",
+      "to": "a30",
+      "color": "blue",
+      "caption": "D5 → red"
+    }
+  ]
+}

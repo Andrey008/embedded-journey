@@ -8,6 +8,7 @@ A 16-week hands-on plan (November 2026 – March 2027): minimum theory, maximum 
 | # | Project | Platform | What's inside | Video |
 |---|---------|----------|---------------|-------|
 | 01 | [Traffic light with pedestrian button](projects/01-traffic-light/) | Arduino Uno | GPIO, `millis()` state machine, debouncing, 7-segment display | [▶️](https://www.youtube.com/watch?v=e7iWiRZsFYM) |
+| 02 | [Light theremin](projects/02-light-theremin/) | Arduino Uno | Oscilloscope, PWM, ADC, voltage divider, photoresistor, `tone()`, RGB mixing, calibration | [▶️](https://youtube.com/shorts/sSS71Y4ssPM) |
 
 <!-- Add a row after each mini-project -->
 

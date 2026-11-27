@@ -1,0 +1,172 @@
+<title>Делитель: сборка</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: zoomed breadboard on the left, ladder schematic on the right, stacked on phones */
+:root {
+  --bg: #f3f5f7; --fg: #1b2228; --muted: #5d6973; --line: #d5dbe1; --card: #ffffff;
+  --board: #fbfcfd; --board-edge: #c9d1d8; --hole: #9aa6b0;
+  --rail-red: #d63a30; --rail-blue: #2c63c8;
+  --wire-black: #23272b; --wire-yellow: #e5b400; --wire-edge: #ffffff;
+  --res-body: #d9c29a; --mid: rgba(229,180,0,.18); --gnd: rgba(44,99,200,.14);
+  --font-text: "Inter", system-ui, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12171b; --fg: #e4e9ee; --muted: #93a0aa; --line: #2b343b; --card: #1a2126;
+  --board: #e9edf0; --board-edge: #b9c2c9; --hole: #8c98a2; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12171b; --fg: #e4e9ee; --muted: #93a0aa; --line: #2b343b; --card: #1a2126;
+  --board: #e9edf0; --board-edge: #b9c2c9; --hole: #8c98a2; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-text); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; }
+main { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+h1 { font-size: 1.5rem; margin: 0; text-wrap: balance; }
+h2 { font-size: 1.05rem; margin: 0 0 8px; }
+.sub { color: var(--muted); margin: 4px 0 0; }
+.grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; }
+.grid > * { min-width: 0; }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow-x: auto; }
+.card svg { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--font-mono); }
+code { font-family: var(--font-mono); font-size: .9em; background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+.note { border-left: 3px solid var(--line); padding-left: 12px; color: var(--muted); margin: 0; }
+</style>
+
+<main>
+  <header>
+    <h1>Шаг 5. Делитель напряжения</h1>
+    <p class="sub">Крупно колонки 14–21 макетки. Uno USB влево, макетка над ней, шины сверху.</p>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <h2>На макетке</h2>
+      <svg viewBox="0 0 560 470" role="img" aria-label="Breadboard columns 14 to 21 with R1, R2, GND and A1 wires">
+        <rect x="20" y="10" width="520" height="340" rx="8" fill="var(--board)" stroke="var(--board-edge)" stroke-width="2"/>
+        <line x1="40" y1="28" x2="520" y2="28" stroke="var(--rail-red)" stroke-width="2"/>
+        <line x1="40" y1="92" x2="520" y2="92" stroke="var(--rail-blue)" stroke-width="2"/>
+        <text x="30" y="46" font-size="14" fill="var(--rail-red)" font-weight="700">+</text>
+        <text x="30" y="82" font-size="14" fill="var(--rail-blue)" font-weight="700">−</text>
+
+        <!-- column highlights -->
+        <rect x="210" y="122" width="40" height="196" rx="8" fill="var(--mid)" stroke="#e5b400" stroke-dasharray="4 3"/>
+        <rect x="310" y="122" width="40" height="196" rx="8" fill="var(--gnd)" stroke="var(--rail-blue)" stroke-dasharray="4 3"/>
+        <g id="holes"></g>
+
+        <!-- R1: red rail (col 17) -> a17, standing over the blue rail -->
+        <g>
+          <line x1="230" y1="40" x2="230" y2="140" stroke="#8a9299" stroke-width="3"/>
+          <rect x="219" y="62" width="22" height="50" rx="9" fill="var(--res-body)" stroke="#9c8358"/>
+          <rect x="219" y="70" width="22" height="5" fill="#7a4a1e"/>
+          <rect x="219" y="80" width="22" height="5" fill="#1b1b1b"/>
+          <rect x="219" y="90" width="22" height="5" fill="#ef7d1a"/>
+          <rect x="219" y="102" width="22" height="4" fill="#c8a23a"/>
+        </g>
+        <!-- R2: d17 -> d19 -->
+        <g>
+          <line x1="230" y1="260" x2="330" y2="260" stroke="#8a9299" stroke-width="3"/>
+          <rect x="255" y="249" width="50" height="22" rx="9" fill="var(--res-body)" stroke="#9c8358"/>
+          <rect x="263" y="249" width="5" height="22" fill="#7a4a1e"/>
+          <rect x="273" y="249" width="5" height="22" fill="#1b1b1b"/>
+          <rect x="283" y="249" width="5" height="22" fill="#ef7d1a"/>
+          <rect x="295" y="249" width="4" height="22" fill="#c8a23a"/>
+        </g>
+        <!-- wires -->
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M330,140 V80" stroke="var(--wire-edge)" stroke-width="9"/>
+          <path d="M330,140 V80" stroke="var(--wire-black)" stroke-width="6"/>
+          <path d="M230,220 H470 V420" stroke="var(--wire-edge)" stroke-width="9"/>
+          <path d="M230,220 H470 V420" stroke="var(--wire-yellow)" stroke-width="6"/>
+        </g>
+        <g fill="#c9cfd4" stroke="#55606a" stroke-width="1.2">
+          <circle cx="230" cy="40" r="5"/><circle cx="230" cy="140" r="5"/>
+          <circle cx="230" cy="260" r="5"/><circle cx="330" cy="260" r="5"/>
+          <circle cx="330" cy="140" r="5"/><circle cx="330" cy="80" r="5"/>
+          <circle cx="230" cy="220" r="5"/>
+        </g>
+
+        <!-- labels -->
+        <g font-size="12" font-weight="700">
+          <rect x="70" y="56" width="120" height="24" rx="12" fill="var(--rail-red)"/>
+          <text x="130" y="72" text-anchor="middle" fill="#fff">① R1 10k</text>
+          <line x1="190" y1="68" x2="218" y2="78" stroke="var(--rail-red)" stroke-width="1.5"/>
+
+          <rect x="258" y="282" width="120" height="24" rx="12" fill="#7a5a2a"/>
+          <text x="318" y="298" text-anchor="middle" fill="#fff">② R2 10k</text>
+
+          <rect x="360" y="100" width="132" height="24" rx="12" fill="var(--wire-black)"/>
+          <text x="426" y="116" text-anchor="middle" fill="#fff">③ a19 → −</text>
+          <line x1="360" y1="112" x2="336" y2="112" stroke="var(--wire-black)" stroke-width="1.5"/>
+
+          <rect x="380" y="428" width="150" height="26" rx="13" fill="var(--wire-yellow)"/>
+          <text x="455" y="445" text-anchor="middle" fill="#1b1b1b">④ к Uno A1</text>
+        </g>
+        <g font-size="11" fill="var(--muted)">
+          <text x="230" y="372" text-anchor="middle">колонка 17</text>
+          <text x="230" y="386" text-anchor="middle">= середина</text>
+          <text x="330" y="372" text-anchor="middle">колонка 19</text>
+          <text x="330" y="386" text-anchor="middle">= GND</text>
+          <text x="60" y="372">← потенциометр</text>
+          <text x="60" y="386">  (10–14)</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="card">
+      <h2>Та же схема «лесенкой»</h2>
+      <svg viewBox="0 0 280 430" role="img" aria-label="Divider schematic: 5V, R1, middle point to A1, R2, GND">
+        <g font-size="13" font-weight="700">
+          <text x="100" y="26" text-anchor="middle" fill="var(--rail-red)">5V (красная шина)</text>
+          <text x="100" y="420" text-anchor="middle" fill="var(--rail-blue)">GND (синяя шина)</text>
+        </g>
+        <g stroke="var(--fg)" stroke-width="2.5" fill="none">
+          <line x1="100" y1="38" x2="100" y2="70"/>
+          <rect x="84" y="70" width="32" height="90" rx="3"/>
+          <line x1="100" y1="160" x2="100" y2="250"/>
+          <rect x="84" y="250" width="32" height="90" rx="3"/>
+          <line x1="100" y1="340" x2="100" y2="400"/>
+        </g>
+        <line x1="100" y1="205" x2="200" y2="205" stroke="var(--wire-yellow)" stroke-width="4"/>
+        <circle cx="100" cy="205" r="6" fill="var(--fg)"/>
+        <g font-size="13" fill="var(--fg)">
+          <text x="132" y="112" font-weight="700">R1</text><text x="132" y="128">10k</text>
+          <text x="132" y="292" font-weight="700">R2</text><text x="132" y="308">10k</text>
+          <text x="206" y="201" font-weight="700">A1</text>
+          <text x="206" y="219" fill="var(--muted)">2.5V</text>
+          <text x="20" y="200" fill="var(--muted)" font-size="11">колонка</text>
+          <text x="20" y="214" fill="var(--muted)" font-size="11">17</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2>Как это читать</h2>
+    <ul>
+      <li>Пять дырок <code>a17</code>–<code>e17</code> внутри соединены, это один провод. В них сходятся три вещи: нижняя ножка R1 (<code>a17</code>), левая ножка R2 (<code>d17</code>) и жёлтый провод на A1 (<code>c17</code>). Это и есть точка между резисторами.</li>
+      <li>Колонка 19 тоже один провод: правая ножка R2 (<code>d19</code>) и чёрный провод на синюю шину (<code>a19</code>). Так низ R2 попадает на GND.</li>
+      <li>R1 стоит «стоя»: одна ножка в красной шине прямо над колонкой 17, вторая в <code>a17</code>. По пути она перешагивает синюю шину и не втыкается в неё.</li>
+      <li>Ток идёт так: красная шина → R1 → колонка 17 → R2 → колонка 19 → синяя шина. A1 подглядывает в середину.</li>
+    </ul>
+    <p class="note" style="margin-top:10px">Если у твоей макетки синяя шина снаружи, а красная внутри, R1 перешагивает уже красную. Главное, чтобы верхняя ножка R1 была в шине с <b>+</b>.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const g = document.getElementById("holes");
+  const colX = c => 30 + (c - 13) * 50;   // col 17 -> 230, col 19 -> 330
+  const rows = { a: 140, b: 180, c: 220, d: 260, e: 300 };
+  const el = (tag, attrs, text) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (text) n.textContent = text; return n; };
+  for (let c = 14; c <= 21; c++) {
+    const x = colX(c);
+    [40, 80].forEach(y => g.appendChild(el("rect", { x: x - 5, y: y - 5, width: 10, height: 10, rx: 2, fill: "var(--hole)" })));
+    for (const r in rows) g.appendChild(el("rect", { x: x - 5, y: rows[r] - 5, width: 10, height: 10, rx: 2, fill: "var(--hole)" }));
+    g.appendChild(el("text", { x, y: 340, "font-size": 12, "text-anchor": "middle", fill: "#5d6973" }, String(c)));
+  }
+  for (const r in rows) g.appendChild(el("text", { x: 36, y: rows[r] + 4, "font-size": 12, "text-anchor": "middle", fill: "#5d6973" }, r));
+})();
+</script>
