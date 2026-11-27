@@ -1,0 +1,19 @@
+{
+  "title": "W02 · Pot → ADC → PWM",
+  "board": "uno",
+  "parts": [
+    { "id": "pot", "type": "potentiometer", "legs": ["e4", "e6", "e8"], "label": "10kΩ pot" },
+    { "id": "r1", "type": "resistor", "from": "b28", "to": "b23", "label": "220Ω" },
+    { "id": "led", "type": "led", "anode": "d23", "cathode": "d22", "color": "red", "label": "LED" }
+  ],
+  "wires": [
+    { "from": "5V", "to": "+1", "color": "red", "caption": "5V → + rail" },
+    { "from": "GND", "to": "-2", "color": "black", "caption": "GND → − rail" },
+    { "from": "+4", "to": "a4", "color": "red", "caption": "+ → pot left" },
+    { "from": "-8", "to": "a8", "color": "black", "caption": "− → pot right" },
+    { "from": "A0", "to": "a6", "color": "yellow", "caption": "pot wiper → A0" },
+    { "from": "D10", "to": "a28", "color": "orange", "caption": "D10 (PWM) → 220Ω" },
+    { "from": "-22", "to": "a22", "color": "black", "caption": "LED − → GND" }
+  ],
+  "live": { "driver": "pot", "outputs": ["led"], "readout": "A0 = {raw}  →  PWM {pwm}" }
+}

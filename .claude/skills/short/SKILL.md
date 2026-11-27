@@ -1,55 +1,70 @@
 ---
 name: short
-description: Turn the latest OBS recording into a YouTube Short with a standardized title and description, then record the published link in the repo. Use when the user says /short, "сделай шортс", "подготовь видео", or gives a YouTube link for a freshly uploaded video.
+description: Turn the latest OBS recording into a YouTube Short (hook → animated breadboard schematic → footage → cover end card, music, standardized title/description), then archive it and record the published link in the repo. Use when the user says /short, "сделай шортс", "подготовь видео", or gives a YouTube link for a freshly uploaded video.
 ---
 
 # /short
 
-Raw recordings: `~/Movies/embedded-raw/` (OBS, already 1080x1920 vertical: camera on top, Serial/Teleplot below).
-Ready files: `~/Movies/embedded-ready/` (outside git: videos are never committed).
-Video log: `docs/videos.md` (source of truth for numbering).
-Talk to the user in Russian; title, description and repo text in English.
+Talk to the user in Russian; title, description and repo text in English. Videos are never committed to git.
+
+## Folders
+
+| What | Where |
+|---|---|
+| New OBS recordings (unprocessed only) | `~/Movies/embedded-raw/` |
+| Video being prepared / waiting for upload | `~/Movies/embedded/WNN-N-<slug>/` |
+| Published (archive) | `~/Movies/embedded/published/WNN-N-<slug>/` |
+| Music (YouTube Audio Library only) | `~/Music/shorts/` |
+| Video log (numbering source of truth) | `docs/videos.md` |
+
+Each video folder holds: `raw.mp4` (original OBS file), `schematic.mp4`, `cover.png`, `short.mp4` (final), `upload.txt` (title + description).
+Moving the raw file out of `embedded-raw/` as soon as it is processed is what keeps recordings from getting mixed up.
 
 ## Part A: prepare the video
 
-1. **Pick the file.** Newest file in `~/Movies/embedded-raw/` unless the user names one. Show its name, time and duration (`ffprobe`).
-2. **Look at it.** Extract ~6 frames evenly (`ffmpeg -ss T -i f -frames:v 1 -vf scale=360:-1 <scratchpad>/fN.jpg`) and view them. Measure audio with `volumedetect`.
-3. **Find context.**
-   - Current task: Chronix `search_tasks project=EMB status=in_progress` (the weekly one, not EMB-19), then `get_task` → week `WNN`.
-   - Project: the `projects/NN-*` folder for that week (README line `Week: WNN`).
-   - Number: rows in `docs/videos.md` with that week + 1.
-4. **Decide trimming.** From the frames, suggest start/end seconds that cut dead time (hands reaching for OBS, empty frames). Shorts limit is 3 min; aim for 15–45 s.
-5. **Decide sound.** Music tracks live in `~/Music/shorts/` (only YouTube Audio Library tracks, safe from Content ID).
-   - Default: `mute` + a random track from that folder, different from the last row's Music in `docs/videos.md`. The room mic is mostly noise.
-   - If the user says the video has meaningful sound (buzzer, voice): `norm` + music (plays quietly underneath), or `norm` without music if they ask.
-   - Folder empty or missing → `norm`, no music, and remind them how to add tracks (see `docs/recording.md`).
-   - **Credits:** if `<track>.txt` exists next to the track, append its text to the end of the description under `Music:`.
-     If it says a per-video license is required (e.g. Declan DP → license.declandp.info), tell him to generate the
-     license for this video and paste it into the description BEFORE uploading. No `.txt` → assume no attribution needed, but say so.
-6. **Render:** `tools/short.sh "<raw>" ~/Movies/embedded-ready/WNN-N-<slug>.mp4 <start> <end> <audio> [music]`
-7. **Privacy check of the rendered file** (always, never skip). Make contact sheets at 1 frame/s:
-   `ffmpeg -i <ready> -vf "fps=1,scale=360:-1,tile=4x3" <scratchpad>/sheet%02d.jpg` and look at every sheet.
-   Also zoom on the bottom (screen) half if text is small: `crop=1080:820:0:1100,fps=1,scale=540:-1,tile=2x3`.
-   Look for:
-   - **Screen:** notifications/pop-ups, other apps or browser tabs, file paths or usernames, emails, phone numbers,
-     tokens/passwords/API keys, Wi-Fi names, chat messages.
-   - **Camera:** faces or people in the background, documents, shipping labels or parcels with name/address,
-     bank cards, other screens (phone, monitor), reflections, anything showing where he lives (window view, street).
-   - **Legal/policy:** nothing dangerous or that YouTube would flag (weapons, drugs, etc.). Drone/robot hardware itself is fine.
-   - **Sound:** if `norm`/`keep` was used, warn that speech/background voices are NOT checked (no transcription) — he must listen.
-   Report as: ✅ nothing found, or ⚠️ list with timestamps (second N) and a fix (cut the range / blur / re-record).
-   Be honest that this is a 1-frame-per-second sample: something shown for a split second can be missed.
-8. **Write title + description** (template below) and show everything in ONE message:
-   file path, duration, what was trimmed, music track, privacy check result, title, description. Ask only: "ок или поправить?"
-   Also check the title/description themselves contain nothing personal (no name, city, email).
+1. **Pick the file.** Newest file in `~/Movies/embedded-raw/` unless the user names one. Show name, time, duration (`ffprobe`).
+   If there are several files, list them and ask which one(s); never guess between two takes.
+2. **Find context.**
+   - Current task: Chronix `search_tasks project=EMB status=in_progress` (the weekly one, not EMB-19), `get_task` → week `WNN`.
+   - Project: `projects/NN-*` for that week (README line `Week: WNN`). Current step: the newest `steps/NN-*.cpp` / what `src/main.cpp` says.
+   - Number N: rows in `docs/videos.md` with that week + 1. Slug: 2–4 words, kebab-case.
+   - Create `~/Movies/embedded/WNN-N-<slug>/` and **move** the raw file there as `raw.mp4`.
+3. **Look at the footage.** Contact sheet at 1 frame/s: `ffmpeg -i raw.mp4 -vf "fps=1,scale=360:-1,tile=4x3" <scratchpad>/raw%02d.jpg`. Measure audio (`volumedetect`).
+   Decide: footage `start`/`end` (cut OBS clicks, dead time, pop-ups; aim 15–45 s), and `hook_start` = the 2 most striking seconds (LED at full, graph moving, hand on the knob).
+4. **Wiring JSON for the schematic** (format: `tools/video/src/spec.ts`).
+   - Use `projects/NN-*/steps/stepK.wiring.json` for the current step, or the newest one with a lower K if this step didn't change the circuit
+     (check against `src/main.cpp` pins and the frames).
+   - **None fits** → write it yourself from `src/main.cpp` (pins), the step's wiring table (`steps/*.html` / chat) and the frames;
+     save as `steps/stepK.wiring.json`, render only the cover first and show it to him for a quick "схема верная?" before the full render.
+   - Hole positions should match his real breadboard when known; if unknown, a clean plausible layout is fine (it's an illustration), say so.
+   - Board not supported by the renderer yet (only `uno` today) or a part type missing → skip the schematic (use `tools/short.sh`, old flow),
+     say what is missing so it can be added to `tools/video/src/parts.tsx`.
+5. **Render schematic + cover:**
+   `tools/video/render.sh <wiring.json> ~/Movies/embedded/WNN-N-<slug> "WNN #N" "<2–4 BIG WORDS>" <arduino|esp32|stm32|rpi>`
+   Cover words: 2–4 words, uppercase-friendly, with → where it fits (e.g. `POT → LED`).
+6. **Sound.** Default `mute` + a random track from `~/Music/shorts/`, different from the last row's Music in `docs/videos.md`.
+   Meaningful sound (buzzer, voice) → `norm` (+ music underneath). Folder empty → no music, remind how to add tracks (`docs/recording.md`).
+   Credits: if `<track>.txt` exists next to the track, append its text under `Music:` in the description; if it says a per-video
+   license is required, tell him to get it BEFORE uploading.
+7. **Assemble:**
+   `tools/assemble.sh raw.mp4 short.mp4 <start> <end> <hook_start|-> schematic.mp4 cover.png <music|-> <mute|norm>` (run inside the folder).
+8. **Privacy check of `short.mp4`** (always, never skip). Sheets at 1 frame/s: `fps=1,scale=360:-1,tile=4x3`, and zoom on the screen part
+   (`crop=1080:820:0:1100,fps=1,scale=540:-1,tile=2x3`) when text is small. Look for:
+   - **Screen:** notifications/pop-ups, menus, other apps or tabs, file paths/usernames, emails, phone numbers, tokens/passwords/API keys, Wi-Fi names, chats.
+   - **Camera:** faces/people, documents, parcels with name/address, bank cards, other screens, reflections, window views.
+   - **Policy:** nothing YouTube would flag. Drone/robot hardware is fine.
+   - **Sound:** with `norm`, warn that voices are NOT checked — he must listen.
+   Report ✅ nothing found, or ⚠️ with timestamps and a fix (re-assemble with a tighter range). It's a 1 fps sample: say that split-second things can be missed.
+9. **Write `upload.txt`** (title + description, templates below) and show everything in ONE message:
+   folder path, duration and structure (hook / schematic / footage / card), what was cut, music, privacy result, title, description,
+   and that `cover.png` is in the folder. Ask only: "ок или поправить?" Check title/description contain nothing personal.
 
 ## Title template
 
 ```
 Embedded from zero · WNN #N: <What is shown>
 ```
-- `<What is shown>`: 2–6 words, concrete, capitalized like a sentence. E.g. `PWM on an oscilloscope`, `Potentiometer → ADC → Teleplot`.
-- Whole title ≤ 70 characters.
+- `<What is shown>`: 2–6 words, concrete, sentence case. E.g. `PWM on an oscilloscope`, `Potentiometer → ADC → Teleplot`. Whole title ≤ 70 chars.
 
 ## Description template
 
@@ -67,9 +82,9 @@ Replace `#arduino` with `#esp32` / `#stm32` / `#raspberrypi` to match the platfo
 
 ## Part B: after upload (user sends the YouTube link)
 
-1. Append a row to `docs/videos.md`: `| WNN | N | <What is shown> | [NN-name](../projects/NN-name/) | <link> | <music file name or —> |`.
-2. Add to the project README under `## Progress videos` (create the section if missing):
-   `- <What is shown>: <one sentence>. 🎥 <link>`
-3. If it is the final demo of the project, also put the link in the root `README.md` table (Video column).
-4. Offer to move the raw file to Trash (`~/Movies/embedded-raw/`) — ask first, never delete silently.
-5. Do not commit or push unless asked.
+1. Append to `docs/videos.md`: `| WNN | N | <What is shown> | [NN-name](../projects/NN-name/) | <link> | <music file name or —> |`.
+2. Project README, section `## Progress videos` (create if missing): `- <What is shown>: <one sentence>. 🎥 <link>`
+3. Final demo of a project → also the root `README.md` table (Video column).
+4. Move `~/Movies/embedded/WNN-N-<slug>/` to `~/Movies/embedded/published/` and write the link into its `upload.txt`.
+5. Disk is nearly full: if `df -h ~` shows < 10 GB free, suggest deleting `raw.mp4` from old published folders (ask first).
+6. Do not commit or push unless asked.

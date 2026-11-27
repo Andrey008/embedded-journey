@@ -14,9 +14,10 @@
 7. **Stop Recording**. The file lands in `~/Movies/embedded-raw/`.
 
 ## Publishing
-8. In Claude Code: `/short`. You get the ready file in `~/Movies/embedded-ready/`, a title and a description.
-9. YouTube Studio → Create → Upload → the file → paste title + description → Visibility: Unlisted (or Public).
-10. Send the link to Claude: it goes to `docs/videos.md` and the project README.
+8. In Claude Code: `/short`. The recording moves to `~/Movies/embedded/WNN-N-name/` and you get there:
+   `short.mp4` (hook → animated schematic → footage → cover), `cover.png`, and `upload.txt` with the title and description.
+9. YouTube Studio → Create → Upload → `short.mp4` → paste title + description → thumbnail `cover.png` (or pick the last frame in the YouTube app) → Visibility: Unlisted (or Public).
+10. Send the link to Claude: it goes to `docs/videos.md` and the project README, the folder moves to `~/Movies/embedded/published/`.
 
 ## Music
 Only tracks from the **YouTube Audio Library** are safe from copyright claims.
