@@ -59,6 +59,6 @@ export function timings(spec: Spec) {
   const W0 = PARTS0 + spec.parts.length * PD + 0.3;
   const WD = 0.45;
   const LIVE = W0 + spec.wires.length * WD + 0.3;
-  const END = LIVE + (spec.live ? 3.2 : 1.0);
+  const END = LIVE + (spec.live ? 4.2 : 2.0);   // live: 2.2 s sweep to max + 2.0 s hold (last 0.5 s is the crossfade)
   return { PARTS0, PD, W0, WD, LIVE, END };
 }

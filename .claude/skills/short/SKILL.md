@@ -30,7 +30,9 @@ Moving the raw file out of `embedded-raw/` as soon as it is processed is what ke
    - Number N: rows in `docs/videos.md` with that week + 1. Slug: 2–4 words, kebab-case.
    - Create `~/Movies/embedded/WNN-N-<slug>/` and **move** the raw file there as `raw.mp4`.
 3. **Look at the footage.** Contact sheet at 1 frame/s: `ffmpeg -i raw.mp4 -vf "fps=1,scale=360:-1,tile=4x3" <scratchpad>/raw%02d.jpg`. Measure audio (`volumedetect`).
-   Decide: footage `start`/`end` (cut OBS clicks, dead time, pop-ups; aim 15–45 s), and `hook_start` = the 2 most striking seconds (LED at full, graph moving, hand on the knob).
+   Decide footage `start`/`end` (cut OBS clicks, dead time, pop-ups; aim 15–45 s).
+   **No hook by default** (`-`): the video starts with the schematic. He found a 2 s footage teaser before the schematic confusing (2026-11-27).
+   Use a hook only if he asks for one.
 4. **Wiring JSON for the schematic** (format: `tools/video/src/spec.ts`).
    - Use `projects/NN-*/steps/stepK.wiring.json` for the current step, or the newest one with a lower K if this step didn't change the circuit
      (check against `src/main.cpp` pins and the frames).
@@ -47,7 +49,8 @@ Moving the raw file out of `embedded-raw/` as soon as it is processed is what ke
    Credits: if `<track>.txt` exists next to the track, append its text under `Music:` in the description; if it says a per-video
    license is required, tell him to get it BEFORE uploading.
 7. **Assemble:**
-   `tools/assemble.sh raw.mp4 short.mp4 <start> <end> <hook_start|-> schematic.mp4 cover.png <music|-> <mute|norm>` (run inside the folder).
+   `tools/assemble.sh raw.mp4 short.mp4 <start> <end> - schematic.mp4 cover.png <music|-> <mute|norm>` (run inside the folder).
+   Result: schematic (ends on the finished state, LED at full) ⇢ footage ⇢ cover card, with crossfades.
 8. **Privacy check of `short.mp4`** (always, never skip). Sheets at 1 frame/s: `fps=1,scale=360:-1,tile=4x3`, and zoom on the screen part
    (`crop=1080:820:0:1100,fps=1,scale=540:-1,tile=2x3`) when text is small. Look for:
    - **Screen:** notifications/pop-ups, menus, other apps or tabs, file paths/usernames, emails, phone numbers, tokens/passwords/API keys, Wi-Fi names, chats.
@@ -56,7 +59,7 @@ Moving the raw file out of `embedded-raw/` as soon as it is processed is what ke
    - **Sound:** with `norm`, warn that voices are NOT checked — he must listen.
    Report ✅ nothing found, or ⚠️ with timestamps and a fix (re-assemble with a tighter range). It's a 1 fps sample: say that split-second things can be missed.
 9. **Write `upload.txt`** (title + description, templates below) and show everything in ONE message:
-   folder path, duration and structure (hook / schematic / footage / card), what was cut, music, privacy result, title, description,
+   folder path, duration and structure (schematic / footage / card), what was cut, music, privacy result, title, description,
    and that `cover.png` is in the folder. Ask only: "ок или поправить?" Check title/description contain nothing personal.
 
 ## Title template

@@ -14,11 +14,14 @@ const MONO = loadMono("normal", { weights: ["400", "600"] }).fontFamily;
 const clamp = (x: number, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const ease = (x: number) => 1 - Math.pow(1 - clamp(x), 3);
 
-// Live reading 0..1 for the driver part
+// Live reading 0..1 for the driver part: one smooth sweep to the maximum, then hold,
+// so the intro ends on a finished state (LED at full) instead of mid-motion.
+export const SWEEP = 2.2;
 function reading(type: string | undefined, s: number) {
   if (s <= 0) return 0;
-  if (type === "button") return Math.floor(s / 0.6) % 2 ? 1 : 0;
-  return 0.5 + 0.5 * Math.sin(s * 1.6 - Math.PI / 2);
+  if (type === "button") return s < 0.4 ? 0 : s < 0.8 ? 1 : s < 1.2 ? 0 : 1;
+  const x = clamp(s / SWEEP);
+  return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;   // ease in-out
 }
 
 export const Scene: React.FC<Props & { t: number; mode: "video" | "cover" }> = ({ spec, cover, t, mode }) => {
